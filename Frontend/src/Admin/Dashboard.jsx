@@ -1,6 +1,7 @@
 import React, { use, useEffect, useState } from 'react';
 import logo from "../assets/SpinzPink.png"
 import axios from 'axios';
+import Header from '../Components/AdminHeader';
 const Dashboard = () => {
 
 
@@ -43,7 +44,8 @@ const Dashboard = () => {
       })
 
 
-    return (
+    return (<>
+    <Header/>
         <div className="p-6 bg-gray-100 min-h-screen">
             <div className='mb-5'>
                 <img src={logo}></img>
@@ -108,6 +110,7 @@ const Dashboard = () => {
                 </div>
             </div> */}
         </div>
+        </>
     );
 };
 

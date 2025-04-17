@@ -15,11 +15,13 @@ const client = new twilio(accoundSid, authToken)
 const twilioNumber = "+19404778897"
 
 const con = new Client({
-  host: "localhost",
+  host: "shuttle.proxy.rlwy.net",
   user: "postgres",
-  port: 5432,
+  port: 50835,
   password:process.env.DATAPASS,
-  database:process.env.DATABASE
+  database:process.env.DATABASE,
+  connectionString: process.env.DATABASE_URL,
+  ssl: { rejectUnauthorized: false } // required for Railway
 
 })
 

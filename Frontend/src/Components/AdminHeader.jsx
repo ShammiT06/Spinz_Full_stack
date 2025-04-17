@@ -3,7 +3,7 @@ import React from "react";
 import spinzWhite from "../assets/SpinzWhite.png"
 import { signOut } from "firebase/auth";
 import { auth } from "../config"; // Adjust the path as necessary
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 
 
@@ -25,6 +25,13 @@ const Header = () => {
       })
     
   }
+
+
+  
+const handleChange = (e) => {
+  const value = e.target.value;
+  if (value) navigate(value);
+};
 
   return (
     <header className="bg-gradient-to-r from-pink-500 to-purple-500 p-4 flex items-center justify-between text-white shadow">
@@ -64,12 +71,15 @@ const Header = () => {
             <path d="M19 9l-7 7-7-7" />
           </svg>
         </div> */}
-      <div className="relative w-fit text-black cursor-pointer select-none group">
-      <select className="bg-transparent border px-5 py-3 rounded-md text-sm font-inter text-white min-w-[140px] focus:outline-none appearance-none pr-6">
-        <option className="bg-[#925AC6] bg-opacity-25 ">Dashboard</option>
-        <option className="bg-[#925AC6] bg-opacity-25">Admin</option>
-        <option className="bg-[#925AC6] bg-opacity-25">Payment</option>
-        <option className="bg-[#925AC6] bg-opacity-25">Log Out</option>
+      
+ <div className="relative w-fit text-black cursor-pointer select-none group">
+      <select
+        onChange={handleChange}
+        className="bg-transparent border px-5 py-3 rounded-md text-sm font-inter text-white min-w-[140px] focus:outline-none appearance-none pr-6"
+      >
+        <option value="/dash" className="bg-[#925AC6] bg-opacity-25">Dashboard</option>
+        <option value="/admin" className="bg-[#925AC6] bg-opacity-25">Admin</option>
+        <option value="/payout" className="bg-[#925AC6] bg-opacity-25">Payment</option>
       </select>
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -78,8 +88,7 @@ const Header = () => {
       >
         <path d="M233.4 406.6c12.5 12.5 32.8 12.5 45.3 0l192-192c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L256 338.7 86.6 169.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l192 192z" />
       </svg>
-  
-      </div>
+    </div>
       </div>
     </header>
   );
