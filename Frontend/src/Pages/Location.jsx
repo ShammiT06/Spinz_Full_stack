@@ -8,7 +8,7 @@ function Location() {
     const navigate = useNavigate();
     const { image, setimage } = useContext(ImageContext);
     const [loading, setLoading] = useState(false);
-    const [loadingMessage, setLoadingMessage] = useState(""); // 👈 Custom message
+    const [loadingMessage, setLoadingMessage] = useState("");
 
     const checkPermissionAndGetLocation = async () => {
         try {
@@ -26,15 +26,39 @@ function Location() {
 
     const getLocation = () => {
         setLoading(true);
-        setLoadingMessage("Opening camera...");
+        setLoadingMessage("Getting your location...");
 
         navigator.geolocation.getCurrentPosition(
-            (position) => {
-                openCameraApp();
+            async (position) => {
+                const { latitude, longitude } = position.coords;
+
+                try {
+                    const res = await fetch(
+                        `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${latitude}&lon=${longitude}`
+                    );
+                    const data = await res.json();
+
+                    const cityName = data.address.city|| data.address.village  || "Unknown City";
+                    const state = data.address.state || "Unknown State";
+                    
+
+                    // const state = data.address.state || "Unknown State";
+
+                    console.log("City:", cityName);
+                    console.log("State:", state);
+
+                    setLoadingMessage("Opening camera...");
+                    openCameraApp();
+                } catch (err) {
+                    console.error("Failed to fetch city:", err);
+                    setLoadingMessage("Failed to fetch city name.");
+                    setLoading(false);
+                }
             },
             (error) => {
                 console.log("An error occurred:", error);
                 setLoading(false);
+                setLoadingMessage("Unable to get location.");
             }
         );
     };
@@ -53,7 +77,6 @@ function Location() {
                 return;
             }
 
-            // 👇 After selecting file, change message
             setLoadingMessage("Please wait...");
 
             const formdata = new FormData();
@@ -84,7 +107,6 @@ function Location() {
         <div>
             <Reusablespinz />
 
-            {/* ✅ Dynamic Loading Overlay */}
             {loading && (
                 <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-80 flex justify-center items-center z-50">
                     <div className="text-white text-lg animate-pulse">

@@ -9,6 +9,7 @@ import axios from 'axios'
 
 function Payment() {
     const [otp, setOtp] = useState([]);
+    const [timer, settimer] = useState(180)
     const [hide, sethide] = useState(false);
     const [verify, unverify] = useState("Request OTP");
     const [buttondisable, setdisable] = useState(false);
@@ -19,20 +20,35 @@ function Payment() {
     const { image } = useContext(ImageContext);
     const qrRef = useRef(null);
     const qrCodeScannerRef = useRef(null);
-    const [user,setuser]=useState("")
-    const [mobile,setmobile]=useState("")
+    const [user, setuser] = useState("")
+    const [mobile, setmobile] = useState("")
     const navigate = useNavigate()
-    const {spin,setspin}=useContext(Refcontext)
-    const [finalotp,setfinalotp]=useState("")
+    const { spin, setspin } = useContext(Refcontext)
+    const [finalotp, setfinalotp] = useState("")
+    const [razor, setrazor] = useState(false)
+    const minutes = Math.floor(timer / 60);
+    const seconds = timer % 60;
 
-    
- useEffect(()=>{
-    const spnz=Math.floor(20250000+Math.random()*30000)+1
-    const final=Math.floor(10+Math.random()*200)+1
-    setspin(`SPNZ-${spnz}-XYZ${final}`)
-  
-  
-   },[])
+
+
+    useEffect(() => {
+        const spnz = Math.floor(20250000 + Math.random() * 30000) + 1
+        const final = Math.floor(10 + Math.random() * 200) + 1
+        setspin(`SPNZ-${spnz}-XYZ${final}`)
+
+
+    }, [])
+
+    useEffect(() => {
+        if (timer < 0) {
+            return 
+        }
+        const time = setInterval(() => {
+            settimer(prev => prev - 1)
+        }, 900)
+        return () => clearInterval(time)
+
+    }, [timer])
 
 
 
@@ -76,6 +92,7 @@ function Payment() {
         cameraoutput.click();
     }
 
+
     function Scanner() {
         setScannerVisible(true);
     }
@@ -83,60 +100,57 @@ function Payment() {
     function verified() {
         // console.log(finalotp)
 
-        if(otp==finalotp)
-        {
+        if (otp == finalotp) {
             sethide(false);
-        unverify(
-            <div className="flex items-center gap-2">
-                <p>Verified</p>
-                <img src={tick} alt="tick" />
-            </div>
-        );
-        setdisable(false);
-        setbutton(true);
+            unverify(
+                <div className="flex items-center gap-2">
+                    <p>Verified</p>
+                    <img src={tick} alt="tick" />
+                </div>
+            );
+            setdisable(false);
+            setbutton(true);
 
         }
-        else if(!otp)
-        {
+        else if (!otp) {
             alert("otp not entered")
         }
-        else
-        {
+        else {
             alert("Invalid OTP")
         }
 
 
-        
+
     }
 
-    const dataupload=()=>{
-        axios.post("http://localhost:5000/user",{user,mobile,upiId,image,spin}).then(()=>{
-            console.log("Data Sent Successfully")            
+    const dataupload = () => {
+        axios.post(import.meta.env.VITE_USER, { user, mobile, upiId, image, spin }).then(() => {
+            console.log("Data Sent Successfully")
 
-        }).catch(()=>{
+        }).catch(() => {
             console.log("Error in sending Data")
         })
 
-        setTimeout(()=>{
+        setTimeout(() => {
             navigate("/ref")
-        },2000)
-        
+        }, 2000)
+
     }
 
-    const core=()=>{
-        axios.post("http://localhost:5000/otp",{mobile:mobile})
-        .then((data)=>{
-            // console.log("Success:",data.data.otp)
-            let newotp=data.data.otp
-            setfinalotp(newotp)
-            
-        })
-        setTimeout(()=>{
+    const core = () => {
+        axios.post(import.meta.env.VITE_OTP_API, { mobile: mobile })
+            .then((data) => {
+                // console.log("Success:",data.data.otp)
+                let newotp = data.data.otp
+                setfinalotp(newotp)
+
+            })
+        setTimeout(() => {
             sethide(true)
             setdisable(true)
-        },1000)
+        }, 1000)
     }
-// console.log(finalotp)
+    // console.log(finalotp)
 
     return (
         <div className="overflow-hidden">
@@ -156,7 +170,7 @@ function Payment() {
                         className="w-full h-[52px] p-5 border rounded-lg border-[#D1D1D1] mt-2 placeholder:font-inter outline-none"
                         placeholder="Enter your name"
                         value={user}
-                        onChange={(e)=>{setuser(e.target.value)}}
+                        onChange={(e) => { setuser(e.target.value) }}
                     />
 
                     <div className="mt-8">
@@ -174,10 +188,10 @@ function Payment() {
                                 <input
                                     type="tel"
                                     maxLength="10"
-                                    required 
+                                    required
                                     className="outline-none font-inter font-normal text-base w-full h-[19px] pr-4 pl-4"
                                     value={mobile}
-                                    onChange={(e)=>{setmobile(e.target.value)}}
+                                    onChange={(e) => { setmobile(e.target.value) }}
                                 />
                                 <button
                                     className={`pl-8 text-sm w-full text-[#ED174FCC] font-inter font-semibold ${buttondisable ? "text-gray-600" : "text-[#ED174FCC]"
@@ -196,12 +210,13 @@ function Payment() {
                     <div className="mt-5">
                         <p className="font-inter text-1xl font-medium">OTP</p>
                         <div className="flex w-full justify-center gap-4">
-                            <input type="number" required maxLength="6" value={otp} onChange={(e)=>{setOtp(e.target.value)}} placeholder="your OTP" className="w-full p-4 rounded-lg font-inter text-lg border mt-2 border-pink-500 outline-none"/>
+                            <input type="number" required maxLength="6" value={otp} onChange={(e) => { setOtp(e.target.value) }} placeholder="your OTP" className="w-full p-4 rounded-lg font-inter text-lg border mt-2 border-pink-500 outline-none" />
                         </div>
 
                         <div className="flex items-center justify-between w-full gap-24 mt-14">
-                            <h1 className="font-inter text-1xl font-light">
-                                OTP will Expire in
+                            <h1 className="font-satoshi font-medium text-base">
+                                OTP will Expire in:
+                                <span className="ml-1 font-satoshi font-bold text-[#EE5557]">{`${minutes.toString().padStart(2,'0')}:${seconds.toString().padStart(2,'0')}`}</span>
                             </h1>
                             <button
                                 className="w-[113px] h-[52px] rounded-full border bg-[#ED174FCC] text-white font-inter text-[14px] font-semibold"
@@ -210,6 +225,7 @@ function Payment() {
                                 Verify OTP
                             </button>
                         </div>
+                        <h1 className="font-satoshi text-base  text-center mt-7">Didn't Recive the OTP ? <span className="text-[#007AFF] font-bold cursor-pointer" onClick={core}>Resend OTP</span></h1>
                     </div>
                 )}
 

@@ -6,7 +6,8 @@ export default {
       fontFamily:{
         open:["Open Sans","sans-serif"],
         inter:[ "Inter", "sans-serif"],
-        marienda:["Merienda", "cursive"]
+        marienda:["Merienda", "cursive"],
+        satoshi: ['Satoshi-Light']
       },
       backgroundColor:{
         baby:"#A246BB14",

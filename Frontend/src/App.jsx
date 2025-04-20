@@ -16,6 +16,7 @@ import Tracking from "./SMS/Tracking.jsx";
 import SMSForm from "../src/SMS/SMSForm.jsx";
 import SupportRef from "../src/SMS/SupportRef.jsx";
 import Dashboard from "./Admin/Dashboard.jsx";
+import Pending from "./Admin/Pending/MainPending.jsx";
 
 
 const ImageContext = createContext();
@@ -44,6 +45,7 @@ function App() {
             <Route path="/pending/:id" element={<InnerPending />} />
             <Route path="/payout" element={<AdminPayment />} />
             <Route path="/dash" element={<Dashboard/>}></Route>
+            <Route path="/pend" element={<Pending/>}>~</Route>
             {/* SMS Routes */}
             <Route path="/tracking" element={<Tracking />} />
             <Route path="/smsform" element={<SMSForm />} />
