@@ -1,14 +1,20 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Reusablespinz from "../Components/Reusablespinz";
 import "../Css/location.css";
-import { ImageContext } from "../App";
+import { CityContext, ImageContext, RegionContext } from "../App";
+import axios from "axios";
 
 function Location() {
     const navigate = useNavigate();
     const { image, setimage } = useContext(ImageContext);
     const [loading, setLoading] = useState(false);
     const [loadingMessage, setLoadingMessage] = useState("");
+
+
+    const { setcity } = useContext(CityContext)
+    const { setregion } = useContext(RegionContext)
+
 
     const checkPermissionAndGetLocation = async () => {
         try {
@@ -38,14 +44,17 @@ function Location() {
                     );
                     const data = await res.json();
 
-                    const cityName = data.address.city|| data.address.village  || "Unknown City";
+                    const cityName = data.address.city ||
+                        data.address.town ||
+                        data.address.village ||
+                        data.address.locality ||
+                        "Unknown City";
                     const state = data.address.state || "Unknown State";
-                    
 
                     // const state = data.address.state || "Unknown State";
 
-                    console.log("City:", cityName);
-                    console.log("State:", state);
+                    setcity(cityName)
+                    setregion(state)
 
                     setLoadingMessage("Opening camera...");
                     openCameraApp();

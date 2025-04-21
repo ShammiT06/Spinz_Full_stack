@@ -20,38 +20,46 @@ import Pending from "./Admin/Pending/MainPending.jsx";
 
 
 const ImageContext = createContext();
-const Refcontext=createContext()
-
+const Refcontext = createContext()
+const CityContext = createContext()
+const RegionContext = createContext()
 function App() {
   const [image, setimage] = useState();
-  const [spin,setspin]=useState()
+  const [spin, setspin] = useState()
+  const [city, setcity] = useState()
+  const [region, setregion] = useState()
 
   return (
     <>
       <ImageContext.Provider value={{ image, setimage }}>
-        <Refcontext.Provider value={{spin,setspin}}>
-        <BrowserRouter>
-          <Routes>
-            {/* Vendor Page Routes */}
-            <Route path="/" element={<Terms />} />
-            <Route path="/cam" element={<Camera />} />
-            <Route path="/loc" element={<Location />} />
-            <Route path="/form" element={<User />} />
-            <Route path="/pay" element={<Payment />} />
-            <Route path="/ref" element={<Reference />} />
-            {/* Admin Page Routes */}
-            <Route path="/login" element={<AdminLoginPage />} />
-            <Route path="/admin" element={<Tabs />} />
-            <Route path="/pending/:id" element={<InnerPending />} />
-            <Route path="/payout" element={<AdminPayment />} />
-            <Route path="/dash" element={<Dashboard/>}></Route>
-            <Route path="/pend" element={<Pending/>}>~</Route>
-            {/* SMS Routes */}
-            <Route path="/tracking" element={<Tracking />} />
-            <Route path="/smsform" element={<SMSForm />} />
-            <Route path="/supportRef" element={<SupportRef />} />
-          </Routes>
-        </BrowserRouter>
+        <Refcontext.Provider value={{ spin, setspin }}>
+          <CityContext.Provider value={{ city, setcity }}>
+            <RegionContext.Provider value={{region,setregion}}>
+
+            <BrowserRouter>
+              <Routes>
+                {/* Vendor Page Routes */}
+                <Route path="/" element={<Terms />} />
+                <Route path="/cam" element={<Camera />} />
+                <Route path="/loc" element={<Location />} />
+                <Route path="/form" element={<User />} />
+                <Route path="/pay" element={<Payment />} />
+                <Route path="/ref" element={<Reference />} />
+                {/* Admin Page Routes */}
+                <Route path="/login" element={<AdminLoginPage />} />
+                <Route path="/admin" element={<Tabs />} />
+                <Route path="/pending/:id" element={<InnerPending />} />
+                <Route path="/payout" element={<AdminPayment />} />
+                <Route path="/dash" element={<Dashboard />}></Route>
+                <Route path="/pend" element={<Pending />}>~</Route>
+                {/* SMS Routes */}
+                <Route path="/tracking" element={<Tracking />} />
+                <Route path="/smsform" element={<SMSForm />} />
+                <Route path="/supportRef" element={<SupportRef />} />
+              </Routes>
+            </BrowserRouter>
+            </RegionContext.Provider>
+          </CityContext.Provider>
         </Refcontext.Provider>
       </ImageContext.Provider>
     </>
@@ -60,4 +68,6 @@ function App() {
 
 export default App;
 export { ImageContext };
-export {Refcontext}
+export { Refcontext }
+export {CityContext}
+export {RegionContext}

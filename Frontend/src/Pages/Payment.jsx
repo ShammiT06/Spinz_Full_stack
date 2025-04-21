@@ -4,12 +4,12 @@ import tick from "../assets/Vector.png";
 import scanner from "../assets/scanner.png";
 import { Link, useNavigate } from "react-router-dom";
 import { Html5Qrcode } from "html5-qrcode";
-import { ImageContext, Refcontext } from "../App";
+import { CityContext, ImageContext, Refcontext, RegionContext } from "../App";
 import axios from 'axios'
 
 function Payment() {
     const [otp, setOtp] = useState([]);
-    const [timer, settimer] = useState(180)
+    const [timer, settimer] = useState(120)
     const [hide, sethide] = useState(false);
     const [verify, unverify] = useState("Request OTP");
     const [buttondisable, setdisable] = useState(false);
@@ -25,9 +25,11 @@ function Payment() {
     const navigate = useNavigate()
     const { spin, setspin } = useContext(Refcontext)
     const [finalotp, setfinalotp] = useState("")
-    const [razor, setrazor] = useState(false)
     const minutes = Math.floor(timer / 60);
     const seconds = timer % 60;
+    const {city}=useContext(CityContext)
+    const {region}=useContext(RegionContext)
+
 
 
 
@@ -35,8 +37,6 @@ function Payment() {
         const spnz = Math.floor(20250000 + Math.random() * 30000) + 1
         const final = Math.floor(10 + Math.random() * 200) + 1
         setspin(`SPNZ-${spnz}-XYZ${final}`)
-
-
     }, [])
 
     useEffect(() => {
@@ -84,6 +84,9 @@ function Payment() {
     }, [scannerVisible, scannerStarted]);
 
 
+    
+
+
     function camera() {
         const cameraoutput = document.createElement("input");
         cameraoutput.type = "file";
@@ -124,7 +127,7 @@ function Payment() {
     }
 
     const dataupload = () => {
-        axios.post(import.meta.env.VITE_USER, { user, mobile, upiId, image, spin }).then(() => {
+        axios.post(import.meta.env.VITE_USER, { user, mobile, upiId, image, spin,city,region}).then(() => {
             console.log("Data Sent Successfully")
 
         }).catch(() => {

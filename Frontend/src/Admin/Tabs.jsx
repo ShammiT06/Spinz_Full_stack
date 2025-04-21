@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import Pending from "/src/Admin/Pending/MainPending.jsx";
 import History from "/src/Admin/History/MainHistory.jsx";
 import Header from "/src/Components/AdminHeader.jsx";
+import head from "../assets/Frame.png"
 import { auth } from "../config";
 import { signOut } from "firebase/auth";
 
@@ -16,11 +17,16 @@ const Tabs = () => {
   const [searchTerm, setSearchTerm] = useState("");
 
 
+  
+
+
+ 
+
+
   return (
     <>
       <Header />
-
-      <div className="flex items-center justify-between p-8 space-y-4">
+      <div className="flex  items-center justify-between p-8 space-y-4">
         <div className="flex flex-col gap-4">
           <h1 className="text-3xl font-inter font-medium">Vendor Requests</h1>
 
@@ -46,11 +52,17 @@ const Tabs = () => {
         </div>
 
         <div className="flex flex-col items-end w-96 flex-wrap gap-4">
+          <div className="flex gap-3">
           <button 
             onClick={() => navigate("/payout")}
           className="bg-pink-500 hover:bg-pink-600 text-white px-6 py-3 rounded-3xl">
             Proceed to Payout
           </button>
+          <div className="flex items-center gap-3 justify-center bg-[#FEF3F6] border border-[#ED174FCC] text-[#ED174FCC] font-inter font-semibold text-sm rounded-full" style={{padding:"12px 19px"}}>
+          <button>Export</button>
+          <img src={head}  alt="" />
+          </div>
+          </div>
           <input
             type="text"
             placeholder="Search by Name, Ref ID, Mobile, UPI Id..."

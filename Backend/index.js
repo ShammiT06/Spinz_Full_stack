@@ -14,12 +14,14 @@ const client = new twilio(accoundSid, authToken)
 
 const twilioNumber = "+19404778897"
 
+let cname
+
 const con = new Client({
   host: "localhost",
   user: "postgres",
   port: 5432,
-  password:process.env.DATAPASS,
-  database:process.env.DATABASE,
+  password: process.env.DATAPASS,
+  database: process.env.DATABASE,
   // connectionString: process.env.DATABASE_URL,
   // ssl: { rejectUnauthorized: false } // required for Railway
 
@@ -31,17 +33,18 @@ con.connect().then(() => {
   console.log("Not connected to Database")
 })
 
-
 app.post("/user", (req, res) => {
   let name = req.body.user
   let mobile = req.body.mobile
   let upiid = req.body.upiId
   let image = req.body.image
   let referenceid = req.body.spin
-  console.log(referenceid)
-  console.log(mobile)
-  const insert_querry = "INSERT INTO users(name,mobile, upiid, image,referenceid) VALUES($1, $2, $3, $4,$5)";
-  con.query(insert_querry, [name, mobile, upiid, image, referenceid], (err, result) => {
+  let city = req.body.city
+  let region = req.body.region
+
+  // const insert_querry = "INSERT INTO users(name,mobile,referenceid,upiid,city,region image) VALUES($1, $2, $3, $4,$5,$6,$7)";
+  const insert_querry = "INSERT INTO users(name, mobile, referenceid, upiid, city, region, image) VALUES($1, $2, $3, $4, $5, $6, $7)";
+  con.query(insert_querry, [name, mobile, referenceid, upiid, city, region, image], (err, result) => {
     if (err) {
       console.log("Error:", err);
       res.send("Error in Sending Data")
@@ -139,16 +142,14 @@ app.put("/approveRequest", (req, res) => {
 });
 
 
-app.get("/approved",(req,res)=>{
-  const approve="SELECT count(*)from users WHERE status !='Pending'"
+app.get("/approved", (req, res) => {
+  const approve = "SELECT count(*)from users WHERE status !='Pending'"
 
-  con.query(approve,(err,response)=>{
-    if(err)
-    {
+  con.query(approve, (err, response) => {
+    if (err) {
       res.send("Error")
     }
-    else
-    {
+    else {
       res.send(response.rows[0].count)
     }
   })

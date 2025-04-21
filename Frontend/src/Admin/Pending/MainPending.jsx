@@ -54,8 +54,8 @@ const Pending = () => {
                 <th className="px-4 py-4 text-center text-xl font-bold">Reference ID</th>
                 <th className="px-4 py-4 text-center text-xl font-bold">Full Name</th>
                 <th className="px-4 py-4 text-center text-xl font-bold">Mobile Number</th>
-                <th className="px-4 py-4 text-center text-xl font-bold">UPI</th>
-                <th className="px-4 py-4 text-center text-xl font-bold">Image</th>
+                <th className="px-4 py-4 text-center text-xl font-bold">UPI Credientials</th>
+                <th className="px-4 py-4 text-center text-xl font-bold">City</th>
                 <th className="px-4 py-4 text-center text-xl font-bold">Action</th>
               </tr>
             </thead>
@@ -66,18 +66,13 @@ const Pending = () => {
                 // onClick={() => window.location.href = /vendor/${item.id}} // Change this path as needed
                 onClick={() => navigate(`/pending/${item.id}`)}
                 >
+                 
                   <td className="px-8 py-2 border-r">{item.id}</td>
                   <td className="px-4 py-2 border-r">{item.referenceid}</td>
                   <td className="px-4 py-2 border-r">{item.name}</td>
                   <td className="px-4 py-2 border-r">{item.mobile}</td>
                   <td className="px-4 py-2 border-r">{item.upiid}</td>
-                  <td className="px-4 py-2 border-r">
-                    <img
-                      src={item.image}
-                      alt="Uploaded"
-                      className="h-10 w-10 mx-auto object-cover"
-                    />
-                  </td>
+                  <td className="px-4 py-2 border-r">{item.city}</td>
                   <td className="px-4 py-2 flex justify-center gap-2">
                     <button className="bg-green-500 hover:bg-green-600 p-2 rounded text-white">
                       ✅

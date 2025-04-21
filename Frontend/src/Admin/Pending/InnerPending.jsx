@@ -6,8 +6,21 @@ import { useNavigate } from "react-router-dom";
 const InnerPending = () => {
 
   const [status, setStatus] = useState(null); // null | "Approved" | "Declined"
+  const [isZoomed,setiszoomed]=useState(false)
 
   const [userData, setUserData] = useState([]);
+
+
+  const handleclick=()=>
+  {
+    setiszoomed(true)
+  }
+
+  const closeZoom=()=>
+  {
+    setiszoomed(false)
+  }
+  
 
 const navigate = useNavigate();
 const { id } = useParams();
@@ -25,7 +38,7 @@ useEffect(() => {
 
 const handleApprove = async () => {
   try {
-    const res =  axios.put("http://localhost:5000/approveRequest", { id }).then(()=>{
+    const res =  axios.put(import.meta.env.VITE_APPROVE,{ id }).then(()=>{
       console.log(res.data)
       setStatus("Approved")
       
@@ -75,6 +88,14 @@ if (!vendor) return <div className="p-4 text-red-500">Vendor not found</div>;
               />
             </div>
             <div>
+              <label>City</label>
+              <input
+              type="text"
+              className="w-full p-3 border rounded-xl"
+              value={vendor.city}
+              />
+            </div>
+            <div>
               <label className="block text-md font-medium mb-1">UPI ID</label>
               <input
                 type="text"
@@ -100,9 +121,22 @@ if (!vendor) return <div className="p-4 text-red-500">Vendor not found</div>;
           <img
             src={vendor.image}
             alt="Preview"
-            className="rounded border object-cover w-auto"
+            className="rounded border object-cover w-auto cursor-pointer hover:scale-105 transition duration-300"
+            onClick={handleclick}
           />
         </div>
+        {isZoomed && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50"
+          onClick={closeZoom}
+        >
+          <img
+            src={vendor.image}
+            alt="Zoomed"
+            className="max-w-full max-h-full rounded-lg shadow-xl border"
+          />
+        </div>
+      )}
 
         <div className="col-span-2 flex justify-end gap-4 mt-4">
       {status === null ? (
