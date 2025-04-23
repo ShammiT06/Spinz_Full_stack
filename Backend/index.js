@@ -17,7 +17,7 @@ const client = new twilio(accoundSid, authToken)
 
 const twilioNumber = "+19404778897"
 
-let link = "https://www.youtube.com/watch?v=_P2kCO9oKyM&list=TLPQMjIwNDIwMjW4PCy_XN--Pg&index=5"
+let link = "https://spinz-full-stack.vercel.app/tracking"
 
 const con = new Client({
   host: "localhost",
