@@ -6,10 +6,34 @@ import Header from "/src/Components/AdminHeader.jsx";
 import head from "../assets/Frame.png"
 import { auth } from "../config";
 import { signOut } from "firebase/auth";
+import axios from "axios"
+
+function handlebutton(){
+  axios.post("http://localhost:5000/download", {
+    selectedIds: [1, 2, 3], // your selected user IDs
+  }, { responseType: "blob" })
+  .then((response) => {
+    const url = window.URL.createObjectURL(new Blob([response.data]));
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", "Selected_Users.xlsx");
+    document.body.appendChild(link);
+    link.click();
+  })
+  .catch((error) => {
+    console.error("Download failed:", error);
+  });
+  
+}
+
 
 const Tabs = () => {
 
   const [activeTab, setActiveTab] = useState("pending");
+
+
+
+
 
   const navigate = useNavigate();
 
@@ -59,7 +83,7 @@ const Tabs = () => {
             Proceed to Payout
           </button>
           <div className="flex items-center gap-3 justify-center bg-[#FEF3F6] border border-[#ED174FCC] text-[#ED174FCC] font-inter font-semibold text-sm rounded-full" style={{padding:"12px 19px"}}>
-          <button>Export</button>
+          <button onClick={handlebutton}>Export</button>
           <img src={head}  alt="" />
           </div>
           </div>

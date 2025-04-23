@@ -4,7 +4,7 @@ import tick from "../assets/Vector.png";
 import scanner from "../assets/scanner.png";
 import { Link, useNavigate } from "react-router-dom";
 import { Html5Qrcode } from "html5-qrcode";
-import { CityContext, ImageContext, Refcontext, RegionContext } from "../App";
+import { CityContext, ImageContext, MobileContext, Refcontext, RegionContext } from "../App";
 import axios from 'axios'
 
 function Payment() {
@@ -21,7 +21,6 @@ function Payment() {
     const qrRef = useRef(null);
     const qrCodeScannerRef = useRef(null);
     const [user, setuser] = useState("")
-    const [mobile, setmobile] = useState("")
     const navigate = useNavigate()
     const { spin, setspin } = useContext(Refcontext)
     const [finalotp, setfinalotp] = useState("")
@@ -29,6 +28,7 @@ function Payment() {
     const seconds = timer % 60;
     const {city}=useContext(CityContext)
     const {region}=useContext(RegionContext)
+    const {mobile, setmobile}= useContext(MobileContext)
 
 
 

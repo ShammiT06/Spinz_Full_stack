@@ -23,11 +23,13 @@ const ImageContext = createContext();
 const Refcontext = createContext()
 const CityContext = createContext()
 const RegionContext = createContext()
+const MobileContext = createContext()
 function App() {
   const [image, setimage] = useState();
   const [spin, setspin] = useState()
   const [city, setcity] = useState()
   const [region, setregion] = useState()
+  const [mobile,setmobile]=useState()
 
   return (
     <>
@@ -35,6 +37,7 @@ function App() {
         <Refcontext.Provider value={{ spin, setspin }}>
           <CityContext.Provider value={{ city, setcity }}>
             <RegionContext.Provider value={{region,setregion}}>
+              <MobileContext.Provider value={{mobile,setmobile}}>
 
             <BrowserRouter>
               <Routes>
@@ -58,6 +61,8 @@ function App() {
                 <Route path="/supportRef" element={<SupportRef />} />
               </Routes>
             </BrowserRouter>
+
+            </MobileContext.Provider>
             </RegionContext.Provider>
           </CityContext.Provider>
         </Refcontext.Provider>
@@ -71,3 +76,4 @@ export { ImageContext };
 export { Refcontext }
 export {CityContext}
 export {RegionContext}
+export {MobileContext}

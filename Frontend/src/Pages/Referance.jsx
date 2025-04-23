@@ -2,10 +2,26 @@ import { useEffect, useState } from "react";
 import logo from "../assets/SpinzPink.png";
 import axios from "axios";
 import { useContext } from "react";
-import { Refcontext } from "../App";
+import { MobileContext, Refcontext } from "../App";
+import { useNavigate } from "react-router-dom";
+
 function Reference() {
   const [isDone, setIsDone] = useState(false);
-  const {spin}=useContext(Refcontext)
+  const { spin } = useContext(Refcontext)
+  const { mobile } = useContext(MobileContext)
+
+
+
+  function confirmation() {
+    axios.post("http://localhost:5000/con", { spin, mobile }).then(() => {
+      console.log("Successfull")
+      setTimeout(() => {
+        setIsDone(true)
+      }, 1000)
+
+
+    })
+  }
 
   return (
     <div className="p-5 mt-48">
@@ -21,15 +37,15 @@ function Reference() {
               submission below.
             </p>
             <h1 className="mt-3 font-bold">
-              Reference ID:{" "} 
+              Reference ID:{" "}
               <span className="text-[#0041E4] text-1xl font-bold font-inter">
-               {spin}
+                {spin}
               </span>
             </h1>
           </div>
           <button
             className="bg-[#EF4370] rounded-full p-3 w-full mt-10 h-auto text-white font-semibold font-inter"
-            onClick={()=>{setIsDone(true)}}
+            onClick={confirmation}
           >
             Done
           </button>

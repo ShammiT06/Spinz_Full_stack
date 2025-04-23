@@ -7,10 +7,10 @@ import { useNavigate } from "react-router-dom";
 
 const ITEMS_PER_PAGE = 8;
 const History = () => {
-  
+
   const navigate = useNavigate();
 
-    const [userData, setUserData] = useState([]);
+  const [userData, setUserData] = useState([]);
 
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
@@ -67,10 +67,10 @@ const History = () => {
             </th>
             <th className="px-4 py-4 text-center text-xl font-bold">Status</th>
             <th className="px-4 py-4 text-center text-xl font-bold">
-              Payments
+              City
             </th>
             <th className="px-4 py-4 text-center text-xl font-bold">
-              Uploaded Image
+              State
             </th>
           </tr>
         </thead>
@@ -89,15 +89,14 @@ const History = () => {
               <td className="px-4 py-2 border-r">
                 <span className="flex items-center justify-start ml-5 gap-1">
                   <span
-                    className={`h-3 w-3 rounded-full ${
-                      item.status === "Approved" ? "bg-green-500" : "bg-red-500"
-                    }`}
+                    className={`h-3 w-3 rounded-full ${item.status === "Approved" ? "bg-green-500" : "bg-red-500"
+                      }`}
                   ></span>
                   {item.status}
                 </span>
               </td>
               <td className="px-4 py-2 border-r">
-                <span className="flex items-center justify-center gap-1">
+                {/* <span className="flex items-center justify-center gap-1">
                   {item.payment === "Done" ? (
                     <>
                       <span className="text-green-600">
@@ -113,15 +112,12 @@ const History = () => {
                       Failed
                     </>
                   )}
-                </span>
+                </span> */}
+                {item.city}
               </td>
               <td className="px-4 py-2 border-r">
                 <div className="flex items-center justify-center gap-2">
-                  <img
-                    src={item.image}
-                    alt="image"
-                    className="w-10 h-10 object-cover  rounded border"
-                  />
+                  {item.region}
                 </div>
               </td>
             </tr>
@@ -135,9 +131,8 @@ const History = () => {
             <button
               key={page}
               onClick={() => setCurrentPage(page)}
-              className={`px-3 py-1 rounded border ${
-                page === currentPage ? "bg-pink-500 text-white" : ""
-              }`}
+              className={`px-3 py-1 rounded border ${page === currentPage ? "bg-pink-500 text-white" : ""
+                }`}
             >
               {page}
             </button>

@@ -50,6 +50,19 @@ const handleApprove = async () => {
   }
 };
 
+const handledecline=async()=>{
+  try{
+    const declined = axios.put("http://localhost:5000/decline",{id}).then((res)=>{
+      console.log(res)
+      setStatus("Declined")
+    })
+  }
+  catch(error)
+  {
+    console.log("There is an Error:",error)
+  }
+}
+
 if (!vendor) return <div className="p-4 text-red-500">Vendor not found</div>;
 
   return (
@@ -143,7 +156,7 @@ if (!vendor) return <div className="p-4 text-red-500">Vendor not found</div>;
         <>
           <button
             className="bg-red-500 hover:bg-red-600 text-white px-6 py-2 rounded-3xl text-xl w-52"
-            onClick={() => setStatus("Declined")}
+            onClick={handledecline}
           >
             Decline
           </button>

@@ -5,6 +5,9 @@ const app = express()
 const twilio = require('twilio')
 app.use(express.json())
 app.use(cors())
+const XLSX = require("xlsx");
+const fs = require("fs");
+const path = require("path");
 require('dotenv').config()
 
 
@@ -14,7 +17,7 @@ const client = new twilio(accoundSid, authToken)
 
 const twilioNumber = "+19404778897"
 
-let cname
+let link = "https://www.youtube.com/watch?v=_P2kCO9oKyM&list=TLPQMjIwNDIwMjW4PCy_XN--Pg&index=5"
 
 const con = new Client({
   host: "localhost",
@@ -56,7 +59,7 @@ app.post("/user", (req, res) => {
 })
 
 app.get("/fetchData", (req, res) => {
-  const fetchQuery = "select * from users where status != 'Approved' ";
+  const fetchQuery = "SELECT * from users where status = 'Pending' ";
   con.query(fetchQuery, (err, result) => {
     if (err) {
       console.error("Error fetching users:", err);
@@ -67,6 +70,22 @@ app.get("/fetchData", (req, res) => {
     }
   });
 });
+
+
+app.get("/payment",(req,res)=>{
+  const payment = "SELECT * from users where status = 'Approved'";
+  con.query(payment,(err,result)=>{
+    if(err)
+    {
+      console.log("Error in Fecting Data")
+      res.send("There is an Error")
+    }
+    else
+    {
+      res.send(result.rows)
+    }
+  })
+})
 
 app.get("/total", (req, res) => {
   const number = "SELECT COUNT(*)  FROM users";
@@ -123,7 +142,6 @@ app.get("/pending", (req, res) => {
 
 app.put("/approveRequest", (req, res) => {
   const id = req.body.id;
-  console.log(id)
 
   const query = `
     UPDATE "users"
@@ -141,6 +159,24 @@ app.put("/approveRequest", (req, res) => {
   });
 });
 
+app.put("/decline",(req,res)=>{
+  const id = req.body.id;
+  console.log(id)
+
+  const query = `
+  UPDATE "users"
+  SET status ='Declined'
+  WHERE id=$1`;
+
+  con.query(query, [id], (err, result) => {
+    if (err) {
+      console.error("SQL Error:", err);
+      return res.status(500).json({ error: "Update failed" });
+    }
+
+    res.json({ message: "User approved successfully" });
+  });
+})
 
 app.get("/approved", (req, res) => {
   const approve = "SELECT count(*)from users WHERE status !='Pending'"
@@ -154,6 +190,79 @@ app.get("/approved", (req, res) => {
     }
   })
 })
+
+app.post("/con", async (req, res) => {
+  const refid = req.body.spin
+  const phone = req.body.mobile
+  try {
+    const message = await client.messages.create({
+      body: `Your Request has been Submitted to Spinz.co Admin. This is Your Reference id ${refid}. For any further quereis or status tracking click the link given below ${link} `,
+      from: "+19404778897",
+      to: `+91${phone}`
+    })
+    res.send("Confirmation Message Sent Successfully")
+  }
+  catch (error) {
+    console.log("Error")
+    res.send("Error in sending message", error)
+  }
+
+
+})
+
+
+app.post("/download", async (req, res) => {
+  try {
+    // Fetching ALL data from users table
+    const query = `select * from users`;
+    const result = await con.query(query);
+
+    const data = result.rows;
+
+    if (data.length === 0) {
+      return res.status(404).send("No data found");
+    }
+
+    const worksheet = XLSX.utils.json_to_sheet(data);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "All Users");
+
+    const filePath = path.join(__dirname, "all_users.xlsx");
+    XLSX.writeFile(workbook, filePath);
+
+    res.download(filePath, "all_users.xlsx", (err) => {
+      if (err) {
+        console.error("Download Error:", err);
+        return res.status(500).send("Download failed");
+      }
+
+      fs.unlinkSync(filePath); // Delete file after download
+    });
+  } catch (err) {
+    console.error("Error generating Excel:", err);
+    res.status(500).send("Internal Server Error");
+  }
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 app.post("/otp", async (req, res) => {
   const phone = req.body.mobile;
   console.log(phone)

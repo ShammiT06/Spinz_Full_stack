@@ -4,6 +4,7 @@ import { signOut } from "firebase/auth";
 import { auth } from "../config";
 import { useNavigate } from "react-router-dom";
 
+
 const Header = () => {
   const navigate = useNavigate();
 
@@ -34,6 +35,7 @@ const Header = () => {
 
       {/* Right section */}
       <div className="flex items-center gap-3">
+       
         <button
           onClick={handleLogout}
           className="p-2 rounded border border-white hover:bg-white hover:text-pink-500 transition"
