@@ -1,3 +1,4 @@
+
 import { useContext, useEffect, useRef, useState } from "react";
 import logo from "../assets/SpinzPink.png";
 import tick from "../assets/Vector.png";

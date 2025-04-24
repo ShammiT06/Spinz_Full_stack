@@ -9,6 +9,7 @@ const XLSX = require("xlsx");
 const fs = require("fs");
 const path = require("path");
 require('dotenv').config()
+const nodemailer=require("nodemailer")
 
 
 const accoundSid = process.env.ACCOUNTSID
@@ -36,6 +37,8 @@ con.connect().then(() => {
   console.log("Not connected to Database")
 })
 
+//Data Upload to Table
+
 app.post("/user", (req, res) => {
   let name = req.body.user
   let mobile = req.body.mobile
@@ -58,6 +61,8 @@ app.post("/user", (req, res) => {
   });
 })
 
+//Pending data 
+
 app.get("/fetchData", (req, res) => {
   const fetchQuery = "SELECT * from users where status = 'Pending' ";
   con.query(fetchQuery, (err, result) => {
@@ -71,6 +76,7 @@ app.get("/fetchData", (req, res) => {
   });
 });
 
+//pay appove
 
 app.get("/payment",(req,res)=>{
   const payment = "SELECT * from users where status = 'Approved'";
@@ -87,6 +93,8 @@ app.get("/payment",(req,res)=>{
   })
 })
 
+//Total Number of users
+
 app.get("/total", (req, res) => {
   const number = "SELECT COUNT(*)  FROM users";
 
@@ -99,8 +107,7 @@ app.get("/total", (req, res) => {
   });
 });
 
-
-
+//Dashboard API
 
 app.get("/bord", (req, res) => {
   const dash = "select * from users"
@@ -115,6 +122,8 @@ app.get("/bord", (req, res) => {
   })
 })
 
+//Pending Data API
+
 app.get("/fetchapprove", (req, res) => {
   const fetchQuery = "SELECT * FROM users where status !='Pending'"
   con.query(fetchQuery, (err, result) => {
@@ -125,6 +134,7 @@ app.get("/fetchapprove", (req, res) => {
   })
 })
 
+//Pending Api
 
 app.get("/pending", (req, res) => {
   const pendingreq = "SELECT count(*) FROM users WHERE status != 'Approved'"
@@ -138,7 +148,7 @@ app.get("/pending", (req, res) => {
   })
 })
 
-
+//Approve Api
 
 app.put("/approveRequest", (req, res) => {
   const id = req.body.id;
@@ -178,6 +188,8 @@ app.put("/decline",(req,res)=>{
   });
 })
 
+//Approved Request
+
 app.get("/approved", (req, res) => {
   const approve = "SELECT count(*)from users WHERE status !='Pending'"
 
@@ -190,6 +202,8 @@ app.get("/approved", (req, res) => {
     }
   })
 })
+
+//confirmation Message
 
 app.post("/con", async (req, res) => {
   const refid = req.body.spin
@@ -210,6 +224,7 @@ app.post("/con", async (req, res) => {
 
 })
 
+//Export Download API
 
 app.post("/download", async (req, res) => {
   try {
@@ -244,25 +259,7 @@ app.post("/download", async (req, res) => {
   }
 });
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+//OTP API
 app.post("/otp", async (req, res) => {
   const phone = req.body.mobile;
   console.log(phone)
@@ -290,6 +287,48 @@ app.post("/otp", async (req, res) => {
     res.status(500).json({ error: "Failed to send OTP", details: err.message });
   }
 });
+
+//Mail API
+
+app.post("/mail",function(req,res){
+
+  let name=req.body.username
+  let mobile=req.body.mobile
+  let email=req.body.email
+  let content=req.body.description
+  let data=req.body.media
+
+  const transport=nodemailer.createTransport({
+    service:"gmail.com",
+    auth:{
+        user:"shammikumar.fullstack@gmail.com",
+        pass:"vufv cttn vvzh xncd"
+    }
+  })
+
+
+  
+  transport.sendMail({
+    from: `"${name} ${email}"`,
+    to:"tevor35715@bauscn.com",
+    subject:`Issue mail from ${name}`,
+    text:`${content}`,
+  html: `<img src=${data}></img>`
+  },
+  function(err,info)
+  {
+    if(err)
+    {
+      console.log("Error",err)
+    }
+    else
+    {
+      console.log("Successfull:",info)
+    }
+   }
+ 
+  )
+})
 
 app.listen(5000, function () {
   console.log("Server Started....")

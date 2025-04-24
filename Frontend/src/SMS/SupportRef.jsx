@@ -1,9 +1,25 @@
 
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import logo from "../assets/SpinzPink.png";
+import { Refcontext } from "../App";
 
 function SupportRef() {
   const [isDone, setIsDone] = useState(false);
+
+  const {spin,setspin}=useContext(Refcontext)
+
+  useEffect(()=>{
+    const Random= Math.floor(202500000+Math.random()*30000)
+  const last= Math.floor(10+Math.random()*300)+1
+  setspin(`SPNZ-${Random}-XYZ${last}`)
+
+
+  },[])
+
+  
+
+
+
 
   return (
     <div className="p-5 mt-48">
@@ -18,7 +34,7 @@ function SupportRef() {
             <h1 className="mt-3 font-bold">
               Support Reference Number :{" "}
               <span className="text-[#0041E4] text-1xl font-bold font-inter">
-                SPNZ-20250326-XYZ123
+                {spin}
               </span>
             </h1>
             <p className="text-1xl">

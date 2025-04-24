@@ -18,11 +18,14 @@ function Tracking() {
               {/* Step 1 - Requested */}
               <div className="flex items-start gap-4 z-10">
                 {/* <CheckCircle className="text-green-500 w-6 h-6 flex-shrink-0 bg-white" /> */}
-                <div>
+                <div className="flex flex-col">
                   <h3 className="text-gray-800 font-semibold">Requested</h3>
+                  <div className="flex gap-2">
+                  <div className="w-6 h-6 rounded-full bg-gray-300 flex-shrink-0" />
                   <p className="text-sm text-gray-500">
                     Request submitted successfully
                   </p>
+                  </div>
                 </div>
               </div>
 
@@ -56,7 +59,7 @@ function Tracking() {
             type="submit"
             className="w-40 bg-pink-500 text-white py-2 rounded-3xl hover:bg-pink-600 transition"
           >
-            <Link to={""}>Contact us</Link>
+            <Link to={"/smsform"}>Contact us</Link>
           </button>
         </div>
       </div>
