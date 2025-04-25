@@ -97,12 +97,16 @@ function Location() {
                 });
 
                 const pen = await res.json();
-                setimage(pen.url);
+
+                // Ensure the image URL is HTTPS
+                const imageUrl = pen.url.startsWith("http://") ? pen.url.replace("http://", "https://") : pen.url;
+
+                setimage(imageUrl);
 
                 // Use Tesseract to recognize text from the uploaded image
                 setLoadingMessage("Recognizing text from image...");
                 Tesseract.recognize(
-                    pen.url,
+                    imageUrl,
                     "eng", // Language for text recognition
                     {
                         logger: (m) => console.log(m),
@@ -122,9 +126,9 @@ function Location() {
                         console.log("No code found in the image.");
                         setOcrFailed(true); // Set failure state
                         setLoading(false); // Stop loading
-                        setTimeout(()=>{
-                            navigate("/")
-                        },2000)
+                        setTimeout(() => {
+                            navigate("/");
+                        }, 2000);
                     }
                 });
             } catch (error) {
