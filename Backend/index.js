@@ -9,7 +9,7 @@ const XLSX = require("xlsx");
 const fs = require("fs");
 const path = require("path");
 require('dotenv').config()
-const nodemailer=require("nodemailer")
+const nodemailer = require("nodemailer")
 
 
 const accoundSid = process.env.ACCOUNTSID
@@ -78,16 +78,14 @@ app.get("/fetchData", (req, res) => {
 
 //pay appove
 
-app.get("/payment",(req,res)=>{
+app.get("/payment", (req, res) => {
   const payment = "SELECT * from users where status = 'Approved'";
-  con.query(payment,(err,result)=>{
-    if(err)
-    {
+  con.query(payment, (err, result) => {
+    if (err) {
       console.log("Error in Fecting Data")
       res.send("There is an Error")
     }
-    else
-    {
+    else {
       res.send(result.rows)
     }
   })
@@ -169,7 +167,7 @@ app.put("/approveRequest", (req, res) => {
   });
 });
 
-app.put("/decline",(req,res)=>{
+app.put("/decline", (req, res) => {
   const id = req.body.id;
   console.log(id)
 
@@ -290,45 +288,47 @@ app.post("/otp", async (req, res) => {
 
 //Mail API
 
-app.post("/mail",function(req,res){
+app.post("/mail", function (req, res) {
 
-  let name=req.body.username
-  let mobile=req.body.mobile
-  let email=req.body.email
-  let content=req.body.description
-  let data=req.body.media
+  let name = req.body.username
+  let mobile = req.body.mobile
+  let email = req.body.email
+  let content = req.body.description
+  let data = req.body.media
 
-  const transport=nodemailer.createTransport({
-    service:"gmail.com",
-    auth:{
-        user:"shammikumar.fullstack@gmail.com",
-        pass:"vufv cttn vvzh xncd"
+  const transport = nodemailer.createTransport({
+    service: "gmail.com",
+    auth: {
+      user: "shammikumar.fullstack@gmail.com",
+      pass: "vufv cttn vvzh xncd"
     }
   })
 
 
-  
+
   transport.sendMail({
     from: `"${name} ${email}"`,
-    to:"tevor35715@bauscn.com",
-    subject:`Issue mail from ${name}`,
-    text:`${content}`,
-  html: `<img src=${data}></img>`
+    to: "shammikumar0601@gmail.com",
+    subject: `Issue mail from ${name}`,
+    html: `<p>${content} 
+    <a href=${data} target="blank">Click Here</a>`
   },
-  function(err,info)
-  {
-    if(err)
-    {
-      console.log("Error",err)
+    function (err, info) {
+      if (err) {
+        console.log("Error", err)
+      }
+      else {
+        console.log("Successfull:", info)
+      }
     }
-    else
-    {
-      console.log("Successfull:",info)
-    }
-   }
- 
+
   )
 })
+
+
+
+
+
 
 app.listen(5000, function () {
   console.log("Server Started....")

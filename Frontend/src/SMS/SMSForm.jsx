@@ -1,7 +1,8 @@
 import { Link } from "react-router-dom";
-import { useState } from "react";
+import { useContext, useState,useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { Refcontext } from "../App";
 
 function SMSForm() {
   const [username, setusername] = useState("");
@@ -11,6 +12,15 @@ function SMSForm() {
   const [media, setmedia] = useState(null);
   const [loading, setLoading] = useState(false); // Add a loading state to manage loading status
   const navigate=useNavigate()
+  const {setspin}=useContext(Refcontext)
+
+
+  
+  useEffect(()=>{
+    const Random= Math.floor(202500000+Math.random()*30000)
+  const last= Math.floor(10+Math.random()*300)+1
+  setspin(`SPNZ-${Random}-XYZ${last}`)
+  },[])
 
   // Make the function async to handle await properly
   const handleFileChange = async (e) => {
@@ -45,10 +55,10 @@ function SMSForm() {
   };
 
   const handlemail = () => {
-    // if (!username || !mobile || !email || !description || !media) {
-    //   alert("Please fill in all the fields and upload a file.");
-    //   return;
-    // } else {
+    if (!username || !mobile || !email || !description || !media) {
+      alert("Please fill in all the fields and upload a file.");
+      return;
+    } else {
       axios
         .post("http://localhost:5000/mail", { username, mobile, email, description, media })
         .then((response) => {
@@ -58,7 +68,7 @@ function SMSForm() {
         .catch((error) => {
           console.error("Error in sending email:", error);
         });
-    // }
+    }
     setTimeout(()=>{
       navigate("/supportRef")
 

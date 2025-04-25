@@ -4,17 +4,16 @@ import Reusablespinz from "../Components/Reusablespinz";
 import "../Css/location.css";
 import { CityContext, ImageContext, RegionContext } from "../App";
 import axios from "axios";
+import Tesseract from "tesseract.js"; // Import Tesseract
 
 function Location() {
     const navigate = useNavigate();
     const { image, setimage } = useContext(ImageContext);
     const [loading, setLoading] = useState(false);
     const [loadingMessage, setLoadingMessage] = useState("");
-
-
-    const { setcity } = useContext(CityContext)
-    const { setregion } = useContext(RegionContext)
-
+    const [ocrFailed, setOcrFailed] = useState(false); // New state for OCR failure
+    const { setcity } = useContext(CityContext);
+    const { setregion } = useContext(RegionContext);
 
     const checkPermissionAndGetLocation = async () => {
         try {
@@ -51,10 +50,8 @@ function Location() {
                         "Unknown City";
                     const state = data.address.state || "Unknown State";
 
-                    // const state = data.address.state || "Unknown State";
-
-                    setcity(cityName)
-                    setregion(state)
+                    setcity(cityName);
+                    setregion(state);
 
                     setLoadingMessage("Opening camera...");
                     openCameraApp();
@@ -86,7 +83,7 @@ function Location() {
                 return;
             }
 
-            setLoadingMessage("Please wait...");
+            setLoadingMessage("Processing image...");
 
             const formdata = new FormData();
             formdata.append("file", file);
@@ -101,10 +98,35 @@ function Location() {
 
                 const pen = await res.json();
                 setimage(pen.url);
-                setTimeout(() => {
-                    setLoading(false);
-                    navigate("/pay");
-                }, 1000);
+
+                // Use Tesseract to recognize text from the uploaded image
+                setLoadingMessage("Recognizing text from image...");
+                Tesseract.recognize(
+                    pen.url,
+                    "eng", // Language for text recognition
+                    {
+                        logger: (m) => console.log(m),
+                    }
+                ).then(({ data: { text } }) => {
+                    // Check if the extracted text contains the code you are looking for
+                    const match = text.match(/[A-Za-z]{3}\s*\d+/i);
+                    if (match) {
+                        console.log("Extracted code:", match[0]);
+                        setOcrFailed(false); // Match found, reset failure state
+                        // After OCR, navigate to the next page
+                        setTimeout(() => {
+                            setLoading(false);
+                            navigate("/pay");
+                        }, 1000);
+                    } else {
+                        console.log("No code found in the image.");
+                        setOcrFailed(true); // Set failure state
+                        setLoading(false); // Stop loading
+                        setTimeout(()=>{
+                            navigate("/")
+                        },2000)
+                    }
+                });
             } catch (error) {
                 console.error("Cloudinary upload failed:", error);
                 setLoading(false);
@@ -120,6 +142,14 @@ function Location() {
                 <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-80 flex justify-center items-center z-50">
                     <div className="text-white text-lg animate-pulse">
                         {loadingMessage}
+                    </div>
+                </div>
+            )}
+
+            {ocrFailed && (
+                <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-80 flex justify-center items-center z-50">
+                    <div className="text-red-600 text-lg font-semibold animate-pulse">
+                        Please try again.
                     </div>
                 </div>
             )}
