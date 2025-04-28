@@ -114,8 +114,29 @@
 
 import { Link } from "react-router-dom";
 import { Check } from "lucide-react";
-
+import { useEffect } from "react";
+import axios from "axios"
 function Tracking() {
+
+  // useEffect(()=>{
+  //   axios.get("http://localhost:5000/tracking").then((done)=>{
+  //     console.log(done)
+
+  //   }).catch((err)=>{
+  //     console.log("Errror:",err)
+  //   })
+
+  // },[])
+
+  useEffect(()=>{
+    axios.get("http://localhost:5000/tracking").then((done)=>[
+      console.log(done)
+    ])
+
+  },[])
+
+
+
   const currentStatus = "Approved"; // This can be dynamic
 
   const steps = [

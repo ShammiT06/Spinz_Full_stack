@@ -40,26 +40,43 @@ con.connect().then(() => {
 //Data Upload to Table
 
 app.post("/user", (req, res) => {
-  let name = req.body.user
-  let mobile = req.body.mobile
-  let upiid = req.body.upiId
-  let image = req.body.image
-  let referenceid = req.body.spin
-  let city = req.body.city
-  let region = req.body.region
+  let name = req.body.user;
+  let mobile = req.body.mobile;
+  let upiid = req.body.upiId;
+  let image = req.body.image;
+  let referenceid = req.body.spin;
+  let city = req.body.city;
+  let region = req.body.region;
 
-  // const insert_querry = "INSERT INTO users(name,mobile,referenceid,upiid,city,region image) VALUES($1, $2, $3, $4,$5,$6,$7)";
-  const insert_querry = "INSERT INTO users(name, mobile, referenceid, upiid, city, region, image) VALUES($1, $2, $3, $4, $5, $6, $7)";
-  con.query(insert_querry, [name, mobile, referenceid, upiid, city, region, image], (err, result) => {
+  // Insert data into users table
+  const insert_query = "INSERT INTO users(name, mobile, referenceid, upiid, city, region, image) VALUES($1, $2, $3, $4, $5, $6, $7) RETURNING id";
+  
+  con.query(insert_query, [name, mobile, referenceid, upiid, city, region, image], (err, result) => {
     if (err) {
       console.log("Error:", err);
-      res.send("Error in Sending Data")
+      return res.status(500).send("Error in Sending Data to Users Table");
     } else {
-      console.log("Data sent to Database Successfully");
-      res.send("Data sent to Database successfully", result);
+      console.log("Data sent to Users Table Successfully");
+
+      // Retrieve the user id from the result of the users insert query
+      const users_id = result.rows[0].id;
+
+      // Insert data into tracking table after users table query
+      const tracking_query = "INSERT INTO tracking(referenceid, users_id) VALUES($1, $2)";
+      
+      con.query(tracking_query, [referenceid, users_id], (error, done) => {
+        if (error) {
+          console.log("Error in Updating Tracking:", error);
+          return res.status(500).send("Error in Sending Data to Tracking Table");
+        } else {
+          console.log("Tracking Data Inserted Successfully");
+          // Respond only after both queries are successful
+          return res.status(200).send("User and Tracking Data Sent to Database Successfully");
+        }
+      });
     }
   });
-})
+});
 
 //Pending data 
 
@@ -70,8 +87,7 @@ app.get("/fetchData", (req, res) => {
       console.error("Error fetching users:", err);
       res.status(500).json({ error: "Failed to fetch data" });
     } else {
-      res.json(result.rows); // ✅ IF using PostgreSQL
-      // res.json(result);     // ✅ IF using MySQL
+      res.json(result.rows); 
     }
   });
 });
@@ -150,6 +166,7 @@ app.get("/pending", (req, res) => {
 
 app.put("/approveRequest", (req, res) => {
   const id = req.body.id;
+ 
 
   const query = `
     UPDATE "users"
@@ -157,14 +174,23 @@ app.put("/approveRequest", (req, res) => {
     WHERE id = $1
   `;
 
+  const update_track = `UPDATE "tracking" SET status ='Approved', updated_at= CURRENT_TIMESTAMP
+  WHERE users_id =$1` 
+
   con.query(query, [id], (err, result) => {
     if (err) {
       console.error("SQL Error:", err);
       return res.status(500).json({ error: "Update failed" });
     }
-
-    res.json({ message: "User approved successfully" });
   });
+
+  con.query(update_track,[id],(err,results)=>{
+    if(err)
+    {
+      console.log("Error in Approving")
+    }
+    res.json({message:"User and Tracking Table Updated "})
+  })
 });
 
 app.put("/decline", (req, res) => {
@@ -324,6 +350,27 @@ app.post("/mail", function (req, res) {
 
   )
 })
+
+
+app.get("/tracking", function(req, res) {
+  const newid = req.query.refid;
+
+  const select_query = `SELECT * FROM tracking WHERE referenceid = $1`;
+
+  con.query(select_query, [newid], (err, result) => {
+    if (err) {
+      console.error(err);
+      res.status(500).send("Error");
+    } else {
+      if (result.rows.length > 0) {
+        res.status(200).json(result.rows[0]);
+        console.log(result.rows[0])  // Send as JSON
+      } else {
+        res.status(404).send("No record found");
+      }
+    }
+  });
+});
 
 
 

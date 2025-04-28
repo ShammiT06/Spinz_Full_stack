@@ -35,9 +35,10 @@ function Payment() {
 
 
     useEffect(() => {
-        const spnz = Math.floor(20250000 + Math.random() * 30000) + 1
-        const final = Math.floor(10 + Math.random() * 200) + 1
-        setspin(`SPNZ-${spnz}-XYZ${final}`)
+        const spnz = Date.now()
+        const final = Math.floor(20 + Math.random() * 500) + 1
+        setspin(`SPNZ-${spnz}-XYZ-${final}`)
+        console.log(spin)
     }, [])
 
     useEffect(() => {
