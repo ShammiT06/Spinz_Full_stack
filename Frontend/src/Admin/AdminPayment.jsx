@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import Header from "../Components/AdminHeader.jsx";
 import axios from "axios";
 import razor from "../assets/third_logo-107.png";
-// import snap from "../assets/third_logo-108.png"; // not used now
+
 
 export default function AdminPayment() {
   const [userData, setUserData] = useState([]);
@@ -35,25 +35,23 @@ export default function AdminPayment() {
 
     try {
       const amount = selectedUsers.length * 1; 
-
-      // 1. Create Razorpay Order by calling backend
       const { data } = await axios.post("http://localhost:5000/create_order", {
-        amount: amount, // Amount in rupees
+        amount: amount, 
       });
 
-      // 2. Razorpay options
+    
       const options = {
-        key: "CLaH569cQ4Pb9PxHU6jHhPPA", // 👉 Replace with your Razorpay Key ID
-        amount: amount * 100, // Amount in paise
+        key: "CLaH569cQ4Pb9PxHU6jHhPPA", 
+        amount: amount * 100, 
         currency: "INR",
         name: "Thirdvizion",
         description: "Payout for Cashback",
-        order_id: data.id, // Backend generated order_id
+        order_id: data.id, 
         handler: async function (response) {
-          // Payment successful
+          
           console.log("Payment Success", response);
 
-          // You can verify payment by calling another backend API if needed
+          
           try {
             await axios.post("http://localhost:5000/verify-payment", {
               paymentData: response,
@@ -86,7 +84,7 @@ export default function AdminPayment() {
     <>
       <Header />
       <div className="p-6 md:p-10 flex flex-col md:flex-row gap-6">
-        {/* Table Section */}
+      
         <div className="w-full md:w-2/3 overflow-auto">
           <h2 className="text-2xl font-semibold mb-4">Review & Confirmation</h2>
           <table className="w-full border rounded-lg overflow-hidden">
@@ -123,7 +121,7 @@ export default function AdminPayment() {
           </table>
         </div>
 
-        {/* Payout Section */}
+     
         <div className="w-full md:w-1/3 border rounded-xl p-6 flex flex-col gap-6 bg-white shadow-xl">
           <div>
             <h3 className="text-lg font-semibold mb-2">Payout details</h3>
