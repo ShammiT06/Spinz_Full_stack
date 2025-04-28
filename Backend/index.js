@@ -377,7 +377,7 @@ app.get("/tracking", function(req, res) {
 
 
 
-
+//Razor Pay Details
 const razorpay = new Razorpay({
   key_id:"rzp_live_gN9cIxPm0o55sE",
   key_secret:"CLaH569cQ4Pb9PxHU6jHhPPA"
@@ -418,7 +418,7 @@ app.post("/verify-payment", async (req, res) => {
     const generated_signature = hmac.digest("hex");
 
     if (generated_signature === razorpay_signature) {
-    
+      
       res.status(200).send("Payment Verified");
     } else {
       res.status(400).send("Payment Verification Failed");
