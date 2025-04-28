@@ -24,7 +24,8 @@ const InnerPending = () => {
 
 const navigate = useNavigate();
 const { id } = useParams();
-const vendor = userData.find((item) => item.id.toString() === id);
+const vendor = userData.find((item) => item.id === Number(id));
+
 
 useEffect(() => {
   axios.get("http://localhost:5000/fetchData")
@@ -34,7 +35,7 @@ useEffect(() => {
     .catch((error) => {
       console.error("Error fetching user data:", error);
     });
-}, []);
+}, [id]);
 
 const handleApprove = async () => {
   try {

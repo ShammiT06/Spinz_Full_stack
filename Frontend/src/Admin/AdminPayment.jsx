@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import Header from "../Components/AdminHeader.jsx";
 import axios from "axios";
 import razor from "../assets/third_logo-107.png";
-import snap from "../assets/third_logo-108.png";
+// import snap from "../assets/third_logo-108.png"; // not used now
 
 export default function AdminPayment() {
   const [userData, setUserData] = useState([]);
@@ -27,6 +27,61 @@ export default function AdminPayment() {
     }
   };
 
+  const handlePayment = async () => {
+    if (selectedUsers.length === 0) {
+      alert("Please select at least one user to pay.");
+      return;
+    }
+
+    try {
+      const amount = selectedUsers.length * 1; 
+
+      // 1. Create Razorpay Order by calling backend
+      const { data } = await axios.post("http://localhost:5000/create_order", {
+        amount: amount, // Amount in rupees
+      });
+
+      // 2. Razorpay options
+      const options = {
+        key: "CLaH569cQ4Pb9PxHU6jHhPPA", // 👉 Replace with your Razorpay Key ID
+        amount: amount * 100, // Amount in paise
+        currency: "INR",
+        name: "Thirdvizion",
+        description: "Payout for Cashback",
+        order_id: data.id, // Backend generated order_id
+        handler: async function (response) {
+          // Payment successful
+          console.log("Payment Success", response);
+
+          // You can verify payment by calling another backend API if needed
+          try {
+            await axios.post("http://localhost:5000/verify-payment", {
+              paymentData: response,
+            });
+            alert("Payment Successful and Verified!");
+          } catch (verifyError) {
+            console.error("Payment verification failed:", verifyError);
+            alert("Payment succeeded but verification failed!");
+          }
+        },
+        prefill: {
+          name: "Admin",
+          email: "admin@example.com",
+          contact: "9999999999",
+        },
+        theme: {
+          color: "#3399cc",
+        },
+      };
+
+      const razorpay = new window.Razorpay(options);
+      razorpay.open();
+    } catch (error) {
+      console.error("Error in payment process:", error);
+      alert("Something went wrong during payment initiation.");
+    }
+  };
+
   return (
     <>
       <Header />
@@ -38,7 +93,7 @@ export default function AdminPayment() {
             <thead className="bg-gray-100">
               <tr>
                 <th className="text-left px-4 py-2">
-                  <input type="checkbox" disabled /> 
+                  <input type="checkbox" disabled />
                 </th>
                 <th className="text-left px-4 py-2">S.no</th>
                 <th className="text-left px-4 py-2">Username</th>
@@ -85,7 +140,7 @@ export default function AdminPayment() {
                   readOnly
                   className="w-16 border px-2 py-1 rounded-md text-center"
                 />
-                <span>₹ {selectedUsers.length * 50}</span>
+                <span>₹ {selectedUsers.length * 1}</span>
               </div>
             </div>
           </div>
@@ -97,10 +152,6 @@ export default function AdminPayment() {
                 <img src={razor} alt="Razorpay" className="w-[136px] h-[35px]" />
                 <input type="radio" name="payment" defaultChecked className="w-5 h-5" />
               </label>
-              {/* <label className="flex items-center gap-6">
-                <img src={snap} alt="Snapmint" className="w-[136px] h-[35px]" />
-                <input type="radio" name="payment" className="w-5 h-5 ml-4" />
-              </label> */}
             </div>
           </div>
 
@@ -108,7 +159,10 @@ export default function AdminPayment() {
             <button className="flex-1 border border-gray-400 bg-opacity-25 font-inter bg-[#898989] text-[#7D7D7D] py-2 rounded-full">
               Back
             </button>
-            <button className="flex-1 bg-blue-600 text-white py-2 rounded-full font-semibold font-inter hover:bg-blue-700">
+            <button
+              onClick={handlePayment}
+              className="flex-1 bg-blue-600 text-white py-2 rounded-full font-semibold font-inter hover:bg-blue-700"
+            >
               Pay on Razorpay
             </button>
           </div>

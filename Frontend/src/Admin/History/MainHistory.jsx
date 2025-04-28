@@ -80,6 +80,7 @@ const History = () => {
               key={item.id}
               className="border-t cursor-pointer hover:bg-gray-100 text-center even:bg-[#d9d9d944]"
               onClick={() => navigate(`/pending/${item.id}`)}
+              
             >
               <td className="px-8 py-2 border-r">{item.id}</td>
               <td className="px-4 py-2 border-r">{item.referenceid}</td>

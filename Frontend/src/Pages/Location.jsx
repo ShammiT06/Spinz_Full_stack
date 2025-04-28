@@ -2,7 +2,7 @@ import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Reusablespinz from "../Components/Reusablespinz";
 import "../Css/location.css";
-import { CityContext, ImageContext, RegionContext } from "../App";
+import { CityContext, ImageContext, RegionContext, TextContext } from "../App";
 import axios from "axios";
 import Tesseract from "tesseract.js"; // Import Tesseract
 
@@ -14,6 +14,7 @@ function Location() {
     const [ocrFailed, setOcrFailed] = useState(false); // New state for OCR failure
     const { setcity } = useContext(CityContext);
     const { setregion } = useContext(RegionContext);
+    const {setRecognized}=useContext(TextContext)
 
     const checkPermissionAndGetLocation = async () => {
         try {
@@ -116,6 +117,8 @@ function Location() {
                     const match = text.match(/[A-Za-z]{3}\s*\d+/i);
                     if (match) {
                         console.log("Extracted code:", match[0]);
+                        setRecognized(match[0])
+
                         setOcrFailed(false); // Match found, reset failure state
                         // After OCR, navigate to the next page
                         setTimeout(() => {

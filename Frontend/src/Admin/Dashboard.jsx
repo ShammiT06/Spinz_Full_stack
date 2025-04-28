@@ -40,6 +40,7 @@ const Dashboard = () => {
       useEffect(()=>{
         axios.get("http://localhost:5000/pending").then((data)=>{
             setpending(data.data)
+            console.log(data.data)
         }).catch(()=>{
             console.log("Error")
         })
@@ -53,13 +54,8 @@ const Dashboard = () => {
         <img src={logo} alt="" />
         </div>
         <div className='flex gap-[40px]'>
-            <p>Profile</p>
-            <p>Logout</p>
-            <p>Options</p>
+            <button className='p-3 border rounded'><Link to="/admin">Admin</Link></button>
         </div>
-        </div>
-        <div className='absolute r-0'>
-            opadjidoijigd
         </div>
     </div>
     

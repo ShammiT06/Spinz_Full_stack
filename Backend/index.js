@@ -8,15 +8,18 @@ app.use(cors())
 const XLSX = require("xlsx");
 const fs = require("fs");
 const path = require("path");
+const Razorpay=require('razorpay')
+const crypto=require('crypto')
 require('dotenv').config()
 const nodemailer = require("nodemailer")
+
 
 
 const accoundSid = process.env.ACCOUNTSID
 const authToken = process.env.AUTHTOKEN
 const client = new twilio(accoundSid, authToken)
 
-const twilioNumber = "+19404778897"
+const twilioNumber = "+19704142856"
 
 let link = "https://spinz-full-stack.vercel.app/tracking"
 
@@ -151,19 +154,19 @@ app.get("/fetchapprove", (req, res) => {
 //Pending Api
 
 app.get("/pending", (req, res) => {
-  const pendingreq = "SELECT count(*) FROM users WHERE status != 'Approved'"
+  const pendingreq = "SELECT count(*) FROM users WHERE status = 'Pending'"
   con.query(pendingreq, (err, snt) => {
     if (err) {
       res.send("Error")
     }
     else {
       res.send(snt.rows[0].count)
+      console.log(snt.rows[0].count)
     }
   })
 })
 
 //Approve Api
-
 app.put("/approveRequest", (req, res) => {
   const id = req.body.id;
  
@@ -299,7 +302,7 @@ app.post("/otp", async (req, res) => {
   try {
     const message = await client.messages.create({
       body: `Your OTP is ${otp}`,
-      from: "+19404778897",
+      from: "+19704142856",
       to: `+91${phone}`
     });
 
@@ -373,6 +376,64 @@ app.get("/tracking", function(req, res) {
 });
 
 
+
+//Razor Pay Details
+
+// const razorpay = new Razorpay({
+//   key_id: "your_key_id",   // From Razorpay Dashboard
+//   key_secret: "your_key_secret" // From Razorpay Dashboard
+// });
+
+const razorpay = new Razorpay({
+  key_id:"rzp_live_gN9cIxPm0o55sE",
+  key_secret:"CLaH569cQ4Pb9PxHU6jHhPPA"
+})
+
+
+app.post("/create_order",async(req,res)=>{
+  try{
+    const amount = req.body.amount
+    console.log(amount)
+    
+    const order = await razorpay.orders.create({
+      amount:amount*100,
+      currency:"INR",
+      receipt:"receipt#1",
+      payment_capture:1,
+    })
+    res.status(200).json({
+      id:order.id,
+    })
+  }catch(error)
+  {
+    console.log("Error")
+  }
+
+})
+
+
+app.post("/verify-payment", async (req, res) => {
+  try {
+    const { paymentData } = req.body;
+    const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = paymentData;
+
+    // Verify the payment signature
+    const crypto = require("crypto");
+    const hmac = crypto.createHmac("sha256", "your_key_secret");
+    hmac.update(razorpay_order_id + "|" + razorpay_payment_id);
+    const generated_signature = hmac.digest("hex");
+
+    if (generated_signature === razorpay_signature) {
+      // Payment is verified
+      res.status(200).send("Payment Verified");
+    } else {
+      res.status(400).send("Payment Verification Failed");
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Error verifying payment");
+  }
+});
 
 
 
