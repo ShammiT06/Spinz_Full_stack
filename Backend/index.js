@@ -377,12 +377,6 @@ app.get("/tracking", function(req, res) {
 
 
 
-//Razor Pay Details
-
-// const razorpay = new Razorpay({
-//   key_id: "your_key_id",   // From Razorpay Dashboard
-//   key_secret: "your_key_secret" // From Razorpay Dashboard
-// });
 
 const razorpay = new Razorpay({
   key_id:"rzp_live_gN9cIxPm0o55sE",
@@ -417,14 +411,14 @@ app.post("/verify-payment", async (req, res) => {
     const { paymentData } = req.body;
     const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = paymentData;
 
-    // Verify the payment signature
+    
     const crypto = require("crypto");
     const hmac = crypto.createHmac("sha256", "your_key_secret");
     hmac.update(razorpay_order_id + "|" + razorpay_payment_id);
     const generated_signature = hmac.digest("hex");
 
     if (generated_signature === razorpay_signature) {
-      // Payment is verified
+    
       res.status(200).send("Payment Verified");
     } else {
       res.status(400).send("Payment Verification Failed");
