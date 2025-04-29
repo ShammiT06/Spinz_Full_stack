@@ -167,13 +167,13 @@ function Payment() {
        
             <div className="p-5">
                 <img src={image} alt="Please Capture Again" className="w-80" />
-                <p className="mt-2 font-inter text-xl">Recognized Text:{recognized}</p>
+                <p className="mt-2 font-inter text-sm">Scanned Text : {recognized}</p>
 
             </div>
 
             <div className="p-5">
                 <div className="flex flex-col">
-                    <label className="font-inter text-1xl font-medium">Username</label>
+                    <label className="font-inter text-1xl font-medium">Name</label>
                     <input
                         type="text"
                         className="w-full h-[52px] p-5 border rounded-lg border-[#D1D1D1] mt-2 placeholder:font-inter outline-none"
